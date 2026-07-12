@@ -20,7 +20,8 @@ variable "node_role_arn" {
 }
 
 variable "cluster_security_group_ids" {
-  type = list(string)
+  type    = list(string)
+  default = []
 }
 
 variable "node_instance_type" {

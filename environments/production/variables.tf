@@ -17,8 +17,8 @@ variable "private_subnets" {
   type = list(string)
 }
 
-variable "public_subnet" {
-  type = string
+variable "public_subnets" {
+  type = list(string)
 }
 
 variable "my_ip_cidr" {
@@ -78,6 +78,14 @@ variable "observability_instance_type" {
   type = string
 }
 
+variable "observability_nodes" {
+  description = "Static placement plan for production observability nodes"
+  type = map(object({
+    subnet_index = number
+    private_ip   = string
+  }))
+}
+
 # =========================
 # OpenVPN
 # =========================
@@ -88,4 +96,10 @@ variable "openvpn_instance_type" {
 variable "vpn_cidr" {
   description = "CIDR of OpenVPN subnet"
   type        = string
+}
+
+variable "enable_eks_ingress" {
+  description = "Install AWS Load Balancer Controller during apply"
+  type        = bool
+  default     = false
 }

@@ -8,6 +8,12 @@ variable "eks_cluster_security_group_id" {
   default     = null
 }
 
+variable "enable_eks_support" {
+  description = "Enable EKS-related security groups and private endpoint access rules"
+  type        = bool
+  default     = false
+}
+
 variable "vpn_cidr" {
   description = "OpenVPN subnet CIDR"
   type        = string

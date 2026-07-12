@@ -19,9 +19,7 @@ eks_cluster_endpoint=${module.eks.cluster_endpoint}
 eks_region=${var.region}
 eks_vpc_id=${module.network.vpc_id}
 
-alb_controller_role_arn=${module.iam_alb.alb_controller_role_arn}
-karpenter_role_arn=${module.iam_karpenter.karpenter_role_arn}
-karpenter_instance_profile=${module.iam_karpenter.instance_profile_name}
+alb_controller_role_arn=${var.enable_eks_ingress ? module.iam_alb[0].alb_controller_role_arn : ""}
 EOF
 }
 

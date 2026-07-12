@@ -176,7 +176,7 @@ resource "aws_security_group" "observability" {
 }
 
 resource "aws_security_group" "eks_control_plane" {
-  count  = var.eks_cluster_security_group_id == null ? 0 : 1
+  count  = var.enable_eks_support ? 1 : 0
   name   = "eks-control-plane-sg"
   vpc_id = var.vpc_id
 
@@ -196,7 +196,7 @@ resource "aws_security_group" "eks_control_plane" {
 }
 
 resource "aws_security_group" "eks_nodes" {
-  count  = var.eks_cluster_security_group_id == null ? 0 : 1
+  count  = var.enable_eks_support ? 1 : 0
   name   = "eks-nodes-sg"
   vpc_id = var.vpc_id
 
@@ -231,7 +231,7 @@ resource "aws_security_group" "eks_nodes" {
 
 resource "aws_security_group_rule" "eks_api_from_vpn" {
   count = (
-    var.vpn_cidr != null && var.eks_cluster_security_group_id != null
+    var.enable_eks_support && var.vpn_cidr != null
   ) ? 1 : 0
 
   type      = "ingress"

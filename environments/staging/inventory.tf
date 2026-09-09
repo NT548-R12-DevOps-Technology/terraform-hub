@@ -1,6 +1,7 @@
 # =====================================================
 # Kubernetes (k0s) Inventory - Staging
 # =====================================================
+/* Temporarily disabled with the k0s EC2 instances.
 resource "local_file" "kubernetes_inventory" {
   filename = "${var.ansible_inventory_dir}/kubernetes.ini"
 
@@ -18,22 +19,29 @@ k0s_controller
 k0s_workers
 EOF
 }
+*/
 
 # =====================================================
-# Observability Inventory - Staging
+# Jenkins Inventory - Staging
 # =====================================================
-resource "local_file" "observability_inventory" {
-  filename = "${var.ansible_inventory_dir}/observability.ini"
+moved {
+  from = local_file.observability_inventory
+  to   = local_file.jenkins_inventory
+}
+
+resource "local_file" "jenkins_inventory" {
+  filename = "${var.ansible_inventory_dir}/jenkins.ini"
 
   content = <<-EOF
-[monitoring]
-obser-1 ansible_host=${module.observability.nodes["obser_01"].private_ip} ansible_user=ubuntu
+[jenkins_master]
+jenkins-master ansible_host=${module.jenkins.nodes["jenkins_master"].private_ip} ansible_user=ubuntu
 
-[logging]
-obser-2 ansible_host=${module.observability.nodes["obser_02"].private_ip} ansible_user=ubuntu
+[jenkins_workers]
+jenkins-worker ansible_host=${module.jenkins.nodes["jenkins_worker"].private_ip} ansible_user=ubuntu
 
-[all:vars]
-loki_host=${module.observability.nodes["obser_02"].private_ip}
+[jenkins_nodes:children]
+jenkins_master
+jenkins_workers
 EOF
 }
 

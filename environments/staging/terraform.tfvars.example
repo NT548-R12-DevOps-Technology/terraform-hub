@@ -42,15 +42,31 @@ k0s_nodes = {
 }
 
 observability_nodes = {
-  obser_01 = {
-    subnet_index = 0
-    private_ip   = "10.0.21.10"
-  }
-
-  obser_02 = {
+  jenkins_master = {
     subnet_index = 1
     private_ip   = "10.0.22.10"
   }
+
+  jenkins_worker = {
+    subnet_index = 1
+    private_ip   = "10.0.22.11"
+  }
+
+  # Enable these nodes in a later provisioning phase.
+  # monitoring = {
+  #   subnet_index = 0
+  #   private_ip   = "10.0.21.10"
+  # }
+
+  # sonarqube = {
+  #   subnet_index = 2
+  #   private_ip   = "10.0.23.10"
+  # }
+
+  # harbor_minio = {
+  #   subnet_index = 2
+  #   private_ip   = "10.0.23.11"
+  # }
 }
 
 # =========================

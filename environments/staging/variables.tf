@@ -106,7 +106,7 @@ variable "k0s_nodes" {
 }
 
 variable "observability_nodes" {
-  description = "Static placement plan for staging observability and storage nodes"
+  description = "Static placement plan for the Jenkins nodes enabled in the first provisioning phase"
   type = map(object({
     subnet_index = number
     private_ip   = string
@@ -116,7 +116,7 @@ variable "observability_nodes" {
     condition = (
       length(var.observability_nodes) == 2 &&
       alltrue([
-        for key in ["obser_01", "obser_02"] :
+        for key in ["jenkins_master", "jenkins_worker"] :
         contains(keys(var.observability_nodes), key)
       ]) &&
       alltrue([
@@ -124,7 +124,7 @@ variable "observability_nodes" {
         node.subnet_index >= 0 && node.subnet_index < 3
       ])
     )
-    error_message = "observability_nodes must define obser_01 and obser_02 and each subnet_index must be between 0 and 2."
+    error_message = "observability_nodes must define jenkins_master and jenkins_worker; each subnet_index must be between 0 and 2."
   }
 }
 
@@ -143,7 +143,7 @@ variable "k0s_instance_type" {
 # Observability nodes
 variable "observability_instance_type" {
   type        = string
-  description = "Instance type for Grafana / Prometheus / Loki / Tempo nodes"
+  description = "Instance type for monitoring and platform service nodes"
 }
 
 # OpenVPN

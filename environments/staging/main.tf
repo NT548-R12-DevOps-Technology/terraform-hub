@@ -100,10 +100,18 @@ module "security" {
   vpn_cidr   = var.vpn_cidr
 }
 
+module "jenkins_security" {
+  source = "../../modules/security/jenkins"
+
+  vpc_id   = module.network.vpc_id
+  vpn_cidr = var.vpn_cidr
+}
+
 # =========================
 # K0S KUBERNETES CLUSTER
 # CONTROL PLANE + WORKERS
 # =========================
+/* Temporarily disabled while provisioning the network and Jenkins nodes first.
 module "k0s" {
   source = "../../modules/compute/k0s"
 
@@ -114,12 +122,18 @@ module "k0s" {
   k0s_sg_id     = module.security.k0s_sg_id
   nodes         = var.k0s_nodes
 }
+*/
 
 # =========================
-# OBSERVABILITY NODES
-# PROMETHEUS / LOKI / TEMPO / GRAFANA
+# JENKINS NODES
+# JENKINS MASTER / JENKINS WORKER
 # =========================
-module "observability" {
+moved {
+  from = module.observability.aws_instance.observability_node["obser_02"]
+  to   = module.jenkins.aws_instance.observability_node["jenkins_master"]
+}
+
+module "jenkins" {
   source = "../../modules/compute/observability"
 
   ami           = data.aws_ami.ubuntu_2204.id
@@ -127,7 +141,7 @@ module "observability" {
   key_name      = module.keypair.key_name
   subnet_ids    = module.network.observability_subnet_ids
 
-  observability_sg_id = module.security.observability_sg_id
+  observability_sg_id = module.jenkins_security.security_group_id
   nodes               = var.observability_nodes
 }
 
@@ -161,6 +175,7 @@ module "openvpn_routing" {
 # =========================
 # APPLICATION LOAD BALANCER
 # =========================
+/* Temporarily disabled while provisioning the network and Jenkins nodes first.
 moved {
   from = module.alb
   to   = module.kubernetes_alb
@@ -187,5 +202,6 @@ module "observability_alb" {
   subnet_ids = module.network.public_subnet_ids
   alb_sg_id  = module.security.alb_sg_id
 
-  target_ip = module.observability.nodes["obser_01"].private_ip
+  target_ip = module.observability.nodes["monitoring"].private_ip
 }
+*/

@@ -1,5 +1,5 @@
 # AWS region
-region = "ap-southeast-1"
+region = "us-east-1"
 
 # SSH key 
 key_name        = "k0s-key"
@@ -10,6 +10,11 @@ vpc_cidr = "10.0.0.0/16"
 vpn_cidr = "10.8.0.0/24"
 
 az_count = 3
+
+# Replace these with the enabled AZs and approved Ubuntu 22.04 AMI ID
+# supplied for your VocLabs account and selected region.
+availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
+ubuntu_2204_ami_id = "ami-REPLACE_WITH_APPROVED_UBUNTU_2204_AMI"
 
 subnet_newbits = 8
 
@@ -41,7 +46,7 @@ k0s_nodes = {
   }
 }
 
-observability_nodes = {
+jenkins_nodes = {
   jenkins_master = {
     subnet_index = 1
     private_ip   = "10.0.22.10"
@@ -51,37 +56,35 @@ observability_nodes = {
     subnet_index = 1
     private_ip   = "10.0.22.11"
   }
+}
 
-  # Enable these nodes in a later provisioning phase.
-  # monitoring = {
-  #   subnet_index = 0
-  #   private_ip   = "10.0.21.10"
-  # }
-
-  # sonarqube = {
-  #   subnet_index = 2
-  #   private_ip   = "10.0.23.10"
-  # }
-
-  # harbor_minio = {
-  #   subnet_index = 2
-  #   private_ip   = "10.0.23.11"
-  # }
+sonarqube_nodes = {
+  sonarqube = {
+    subnet_index = 2
+    private_ip   = "10.0.23.10"
+  }
 }
 
 # =========================
 # Compute
 # =========================
-# AMI is automatically resolved by Terraform using:
-# data "aws_ami" "ubuntu_2204"
-# - Ubuntu 22.04 LTS (Jammy)
-# - Official Canonical AMI
-# - Most recent version per region
+# The AMI is set explicitly above because the VocLabs role does not permit
+# ec2:DescribeImages. Obtain the approved Ubuntu 22.04 AMI ID from the lab.
 
 # Instance Type 
-k0s_instance_type           = "t3.small"
-observability_instance_type = "t3.small"
-openvpn_instance_type       = "t3.micro"
+k0s_instance_type            = "t3.small"
+observability_instance_type  = "t3.small"
+jenkins_master_instance_type = "t3.small"
+jenkins_worker_instance_type = "t3.small"
+sonarqube_instance_type       = "t3.medium"
+openvpn_instance_type        = "t3.micro"
+
+# Jenkins root EBS volumes (GiB)
+jenkins_master_root_volume_size = 30
+jenkins_worker_root_volume_size = 30
+
+# SonarQube root EBS volume (GiB)
+sonarqube_root_volume_size = 30
 
 # Ansible
 ansible_inventory_dir = "../../../ansible-hub/inventories/staging"

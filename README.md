@@ -47,6 +47,19 @@ The staging environment is primarily used to support a
 and focuses on validating infrastructure correctness, network
 isolation, and Kubernetes compatibility.
 
+### List staging EC2 instances
+
+Use AWS CLI to show all non-terminated EC2 instances in the Singapore staging
+region as a table:
+
+```bash
+aws ec2 describe-instances \
+  --region ap-southeast-1 \
+  --filters 'Name=instance-state-name,Values=pending,running,stopping,stopped' \
+  --query 'Reservations[].Instances[].{Name:Tags[?Key==`Name`]|[0].Value,ID:InstanceId,State:State.Name,Type:InstanceType,PrivateIP:PrivateIpAddress,PublicIP:PublicIpAddress,AZ:Placement.AvailabilityZone}' \
+  --output table
+```
+
 ---
 
 ## 2.2 Production Environment
